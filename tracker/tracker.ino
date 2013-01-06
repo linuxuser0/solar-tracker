@@ -1,3 +1,7 @@
+/*
+Tracker 1.0
+Made to track the sun with an Arduino.
+*/
 void setup(){
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
