@@ -12,24 +12,18 @@ float threshold; //a plus or minus threshold for comparison of previous light va
 void setup(){
   Serial.begin(9600);
   calibrateBrightThresh();
-  trackAndGetLocation(loc1);
+  trackAndGetLocationOne();
   waitMin(waittime);
-  trackAndGetLocation(loc2);
+  trackAndGetLocationTwo();
   waitMin(waittime);
 }
 
 void loop(){
-  //FIXXXXXXXXX
   trackWithEstimate(); //uses loc1 and loc2 to move to next location
-  loc1 = loc2; 
-  getLocation(loc2); //sets loc2 to current location 
+  loc1[0] = loc2[0];
+  loc1[1] = loc2[1]; 
+  getLocationLocTwo(); //sets loc2 to current location 
   waitMin(waittime);
-}
-
-void trackAndGetLocation(float loc[]){ //points dish toward light and sets "loc" to the location [x, y]
-  float x = findLightX();
-  float y = findLightY();
-  loc[] = {x, y}
 }
 
 float findLightX(){ //points dish toward light in x dimension, returns x value (angle, 0 to 180)
@@ -48,7 +42,7 @@ float findLightX(){ //points dish toward light in x dimension, returns x value (
     }
     turnXMotor(motorright); //true for left, false for right
   }while(sensorval < brightthresh);
-  return getDegree(tachox);
+  return getXDegree();
 }
 
 float findLightY(){ //points dish toward light in x dimension, returns x value (angle, 0 to 180)
@@ -68,7 +62,7 @@ float findLightY(){ //points dish toward light in x dimension, returns x value (
     turnYMotor(motorright); //true for left, false for right
   }while(sensorval < brightthresh);
   
-  return getDegree(tachoy); 
+  return getYDegree(); 
 }
 
 void turnXMotor(boolean direction){
@@ -116,27 +110,27 @@ void stopYMotor(){
 }
 
 void turnXAngle(float angle){
-  if(angle > getDegree(tachox)){ //motor should turn right
+  if(angle > getXDegree()){ //motor should turn right
     turnXMotor(false);
-    while(angle > getDegree(tachox));
+    while(angle > getXDegree());
     stopXMotor();
   }
-  else if(angle < getDegree(tachox)){
+  else if(angle < getXDegree()){
     turnXMotor(false);
-    while(angle > getDegree(tachox));
+    while(angle > getXDegree());
     stopXMotor();
   }
 }
 
 void turnYAngle(float angle){
-  if(angle > getDegree(tachoy)){ //motor should turn right
+  if(angle > getYDegree()){ //motor should turn right
     turnYMotor(false);
-    while(angle > getDegree(tachoy));
+    while(angle > getYDegree());
     stopYMotor();
   }
-  else if(angle < getDegree(tachoy)){
+  else if(angle < getYDegree()){
     turnYMotor(false);
-    while(angle > getDegree(tachoy));
+    while(angle > getYDegree());
     stopYMotor();
   }
 }
@@ -155,4 +149,30 @@ void calibrateBrightThresh(){
 
 void waitMin(float time){ //waits "time" in minutes
   delay(time*1000*60);
+}
+
+float getXDegree(){
+  analogRead(1)*(360/1023); //range from 0-1023 times degrees per 1023 constant
+}
+
+float getYDegree(){
+  analogRead(2)*(360/1023); //range from 0-1023 times degrees per 1023 constant
+}
+
+void getLocationLocTwo(){
+  //tomake!
+}
+
+void trackAndGetLocationOne(){ //points dish toward light and sets "loc" to the location [x, y]
+  float x = findLightX();
+  float y = findLightY();
+  loc1[0] = x;
+  loc1[1] = y;
+}
+
+void trackAndGetLocationTwo(){
+  float x = findLightX();
+  float y = findLightY();
+  loc2[0] = x;
+  loc2[1] = y;
 }
